@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="TerraWeather">
+  <meta name="theme-color" content="#0ea5e9">
+  <link rel="manifest" href="manifest.json">
+  <link rel="stylesheet" href="css/style.css"/>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800;900&family=Exo+2:wght@400;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+  <title>TerraWeather — Dashboard</title>
+</head>
+<body data-page="home">
+
+  <nav class="navbar">
+    <a class="nav-brand" href="index.html">
+      <div class="brand-icon">T</div>
+      <div>
+        <div class="brand-name">TerraWeather</div>
+        <span class="brand-sub">INDIA WEATHER INTELLIGENCE</span>
+      </div>
+    </a>
+    <div class="nav-links">
+      <a href="index.html" class="active"><span class="icon">⌂</span> Dashboard</a>
+      <a href="forecast.html"><span class="icon">◈</span> Forecast</a>
+      <a href="cities.html"><span class="icon">◉</span> India Cities</a>
+      <a href="alerts.html"><span class="icon">◬</span> Alert Center</a>
+    </div>
+    <div class="nav-right">
+      <div class="live-badge"><span class="live-dot"></span>LIVE</div>
+      <div id="navClock">--:--:--</div>
+    </div>
+  </nav>
+
+  <nav class="bottom-nav">
+    <a href="index.html" class="active"><span class="bn-icon">⌂</span>Home</a>
+    <a href="forecast.html"><span class="bn-icon">◈</span>Forecast</a>
+    <a href="cities.html"><span class="bn-icon">◉</span>Cities</a>
+    <a href="alerts.html"><span class="bn-icon">◬</span>Alerts</a>
+  </nav>
+
+  <div class="loader" id="loader">
+    <div class="loader-spin"></div>
+    <div class="loader-text">FETCHING DATA...</div>
+  </div>
+
+  <div class="page">
+
+    <!-- HERO SECTION -->
+    <div class="home-hero">
+      <div class="hero-left">
+        <p class="hero-tag">🌏 India Weather Intelligence Terminal</p>
+        <h1 class="hero-h1">
+          <div class="line1">REAL-TIME</div>
+          <div class="line2">WEATHER INTELLIGENCE</div>
+        </h1>
+        <p class="hero-sub">Live weather data, intelligent alerts, Air Quality Index, and a 5-day forecast for every Indian city — all in one place.</p>
+        <div class="search-wrap">
+          <div class="search-row">
+            <div class="search-field">
+              <i class="fa-solid fa-magnifying-glass search-icon"></i>
+              <input type="text" id="searchInput" placeholder="Enter city name..." autocomplete="off"/>
+            </div>
+            <button class="btn btn-primary" id="searchBtn">Search</button>
+            <button class="btn btn-ghost" id="locationBtn" title="Use GPS"><i class="fa-solid fa-location-crosshairs"></i></button>
+          </div>
+          <div id="suggestions"></div>
+        </div>
+      </div>
+      <div class="hero-right">
+        <div class="weather-card" id="weatherCard">
+          <div class="wc-empty">
+            <div class="wc-empty-icon">🌤️</div>
+            <div class="wc-empty-text">SEARCH A CITY TO BEGIN</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ALERT STRIP -->
+    <div id="alertStrip"></div>
+
+    <!-- STATS ROW -->
+    <div class="stats-row" id="statsRow" style="display:none">
+      <div class="stat-box"><div class="stat-label"><i class="fa-solid fa-temperature-high"></i> TEMP</div><div class="stat-value" id="s-temp">--<span class="stat-unit">°C</span></div></div>
+      <div class="stat-box"><div class="stat-label"><i class="fa-solid fa-droplet"></i> HUMIDITY</div><div class="stat-value" id="s-hum">--<span class="stat-unit">%</span></div></div>
+      <div class="stat-box"><div class="stat-label"><i class="fa-solid fa-wind"></i> WIND</div><div class="stat-value" id="s-wind">--<span class="stat-unit">km/h</span></div></div>
+      <div class="stat-box"><div class="stat-label"><i class="fa-solid fa-gauge"></i> PRESSURE</div><div class="stat-value" id="s-pres">--<span class="stat-unit">hPa</span></div></div>
+      <div class="stat-box"><div class="stat-label"><i class="fa-solid fa-eye"></i> VISIBILITY</div><div class="stat-value" id="s-vis">--<span class="stat-unit">km</span></div></div>
+      <div class="stat-box"><div class="stat-label"><i class="fa-solid fa-temperature-low"></i> FEELS LIKE</div><div class="stat-value" id="s-feel">--<span class="stat-unit">°C</span></div></div>
+    </div>
+
+    <!-- AQI CARD -->
+    <div class="aqi-card" id="aqiCard" style="display:none">
+      <div class="aqi-header">
+        <div class="aqi-title">
+          <span class="aqi-icon">🌬️</span>
+          Air Quality Index (AQI)
+        </div>
+        <div class="aqi-badge" id="aqiBadge">— AQI —</div>
+      </div>
+      <div class="aqi-bar-wrap">
+        <div class="aqi-bar-track">
+          <div class="aqi-num-label" id="aqiPointerLabel">--</div>
+          <div class="aqi-bar-pointer" id="aqiPointer"></div>
+        </div>
+      </div>
+      <div class="aqi-levels">
+        <span>Good</span><span>Satisfactory</span><span>Moderate</span><span>Poor</span><span>Very Poor</span><span>Severe</span>
+      </div>
+      <div class="aqi-scale-numbers">
+        <span>0</span><span>50</span><span>100</span><span>200</span><span>300</span><span>400</span><span>500</span>
+      </div>
+      <div class="aqi-components" id="aqiComponents"></div>
+    </div>
+
+    <!-- HOME GRID: forecast + history -->
+    <div class="home-grid">
+      <div>
+        <div class="sun-row" id="sunRow" style="display:none">
+          <div class="stat-box"><div class="stat-label"><i class="fa-solid fa-sun" style="color:var(--golden)"></i> SUNRISE</div><div class="stat-value" id="s-rise" style="font-size:1.1rem">--:--</div></div>
+          <div class="stat-box"><div class="stat-label"><i class="fa-solid fa-moon" style="color:var(--purple)"></i> SUNSET</div><div class="stat-value" id="s-set" style="font-size:1.1rem">--:--</div></div>
+        </div>
+        <div class="panel">
+          <div class="panel-label">Quick 5-Day Forecast <span class="dot"></span></div>
+          <div id="miniforecast" style="padding:8px 16px;font-family:var(--font-mono);color:var(--muted);font-size:0.75rem;letter-spacing:2px;padding:20px">Search a city to see forecast</div>
+        </div>
+      </div>
+      <div>
+        <div class="history-wrap">
+          <div class="history-header">
+            <h3>📋 Recent Searches</h3>
+            <button class="clear-btn" id="clearBtn">Clear All</button>
+          </div>
+          <div id="historyList"><div class="no-history">No searches yet</div></div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <footer class="footer">
+    <span class="footer-brand">TERRAWEATHER v9.0</span>
+    <span>Powered by OpenWeatherMap + MySQL</span>
+    <span>India Weather Intelligence Platform</span>
+  </footer>
+
+  <script src="js/app.js"></script>
+</body>
+</html>

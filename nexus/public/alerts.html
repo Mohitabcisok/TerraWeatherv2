@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="theme-color" content="#0ea5e9">
+  <link rel="manifest" href="manifest.json">
+  <link rel="stylesheet" href="css/style.css"/>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800;900&family=Exo+2:wght@400;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+  <title>TerraWeather — Alert Center</title>
+</head>
+<body data-page="alerts">
+  <nav class="navbar">
+    <a class="nav-brand" href="index.html">
+      <div class="brand-icon">T</div>
+      <div><div class="brand-name">TerraWeather</div><span class="brand-sub">INDIA WEATHER INTELLIGENCE</span></div>
+    </a>
+    <div class="nav-links">
+      <a href="index.html"><span class="icon">⌂</span> Dashboard</a>
+      <a href="forecast.html"><span class="icon">◈</span> Forecast</a>
+      <a href="cities.html"><span class="icon">◉</span> India Cities</a>
+      <a href="alerts.html" class="active"><span class="icon">◬</span> Alert Center</a>
+    </div>
+    <div class="nav-right">
+      <div class="live-badge"><span class="live-dot"></span>LIVE</div>
+      <div id="navClock">--:--:--</div>
+    </div>
+  </nav>
+  <nav class="bottom-nav">
+    <a href="index.html"><span class="bn-icon">⌂</span>Home</a>
+    <a href="forecast.html"><span class="bn-icon">◈</span>Forecast</a>
+    <a href="cities.html"><span class="bn-icon">◉</span>Cities</a>
+    <a href="alerts.html" class="active"><span class="bn-icon">◬</span>Alerts</a>
+  </nav>
+
+  <div class="loader" id="loader">
+    <div class="loader-spin"></div>
+    <div class="loader-text">ANALYSING...</div>
+  </div>
+
+  <div class="page alerts-page">
+    <div class="section-header">
+      <div class="section-eyebrow">⚡ Personalized Alert System</div>
+      <h1 class="section-title">Alert <span>Center</span></h1>
+    </div>
+
+    <div class="alert-search">
+      <div class="search-field" style="flex:1">
+        <i class="fa-solid fa-magnifying-glass search-icon"></i>
+        <input type="text" id="searchInput" placeholder="Enter city to check alerts..." autocomplete="off"/>
+      </div>
+      <button class="btn btn-primary" id="searchBtn">Analyse</button>
+      <button class="btn btn-ghost" id="locationBtn"><i class="fa-solid fa-location-crosshairs"></i></button>
+    </div>
+    <div id="suggestions" style="max-width:480px;margin-bottom:16px;"></div>
+
+    <!-- Stats + AQI Hero -->
+    <div class="alert-hero" id="alertHero">
+      <div class="alert-stat-box">
+        <div class="alert-stat-icon">🌡️</div>
+        <div>
+          <div class="alert-stat-label">CURRENT TEMP</div>
+          <div class="alert-stat-val" id="ah-temp">-- °C</div>
+        </div>
+      </div>
+      <div class="alert-stat-box">
+        <div class="alert-stat-icon">📍</div>
+        <div>
+          <div class="alert-stat-label">LOCATION</div>
+          <div class="alert-stat-val" id="ah-city" style="font-size:1.2rem">AWAITING INPUT</div>
+        </div>
+      </div>
+      <div class="alert-stat-box" id="ah-aqi-box" style="display:none">
+        <div class="alert-stat-icon">🌬️</div>
+        <div>
+          <div class="alert-stat-label">AIR QUALITY</div>
+          <div class="alert-stat-val" id="ah-aqi">-- AQI</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- AQI full breakdown on alerts page -->
+    <div class="aqi-card" id="aqiCardAlerts" style="display:none; margin-bottom:24px;">
+      <div class="aqi-header">
+        <div class="aqi-title">
+          <span class="aqi-icon">🌬️</span>
+          Air Quality Index — Detailed Breakdown
+        </div>
+        <div class="aqi-badge" id="aqiBadgeAlerts">— AQI —</div>
+      </div>
+      <div class="aqi-bar-wrap">
+        <div class="aqi-bar-track">
+          <div class="aqi-num-label" id="aqiPointerAlertsLabel">--</div>
+          <div class="aqi-bar-pointer" id="aqiPointerAlerts"></div>
+        </div>
+      </div>
+      <div class="aqi-levels">
+        <span>Good</span><span>Satisfactory</span><span>Moderate</span><span>Poor</span><span>Very Poor</span><span>Severe</span>
+      </div>
+      <div class="aqi-scale-numbers">
+        <span>0</span><span>50</span><span>100</span><span>200</span><span>300</span><span>400</span><span>500</span>
+      </div>
+      <div class="aqi-components" id="aqiComponentsAlerts"></div>
+      <div style="margin-top:16px;padding:14px 16px;border-radius:12px;font-size:0.85rem;line-height:1.7;border-left:5px solid #f59e0b" id="aqiAdvice"></div>
+    </div>
+
+    <!-- Weather alerts list -->
+    <div class="alerts-list" id="alertsList">
+      <div class="empty-state">
+        <div class="empty-icon">🔔</div>
+        <div class="empty-text">SEARCH A CITY ABOVE<br/>TO GENERATE PERSONALIZED ALERTS &amp; AQI<br/><br/>ANALYSES: TEMPERATURE · HUMIDITY · WIND<br/>WEATHER CONDITIONS · AIR QUALITY</div>
+      </div>
+    </div>
+  </div>
+
+  <footer class="footer">
+    <span class="footer-brand">TERRAWEATHER v9.0</span>
+    <span>Powered by OpenWeatherMap + MySQL</span>
+    <span>India Weather Intelligence Platform</span>
+  </footer>
+  <script src="js/app.js"></script>
+</body>
+</html>
